@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:tweet_ui/models/api/tweet.dart';
+// import 'package:tweet_ui/tweet_ui.dart';
+import 'package:twitter_api/twitter_api.dart';
 import 'package:twitter_verified/tweet.dart';
+import 'secrets.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,15 +16,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Teddy'),
@@ -32,15 +26,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -48,35 +33,51 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
+  final _twitterOauth = new twitterApi(
+      consumerKey: Secrets.consumerKey,
+      consumerSecret: Secrets.consumerSecret,
+      token: Secrets.token,
+      tokenSecret: Secrets.tokenSecret);
 
-  Future<Null> getUser() async {
-    final response = await http.get("https://randomuser.me/api/");
-    final responseJson = json.decode(response.body);
+  List<Widget> _tweets = [];
+
+  Future<dynamic> getTweets() async {
+    return _twitterOauth.getTwitterRequest(
+      // Http Method
+      "GET",
+      // Endpoint you are trying to reach
+      "statuses/user_timeline.json",
+      // The options for the request
+      options: {
+        "user_id": "19025957",
+        "screen_name": "TTCnotices",
+        "count": "20",
+        "trim_user": "true",
+        "tweet_mode": "extended", // Used to prevent truncating tweets
+      },
+    );
   }
 
   Future<Null> _refresh() {
-    return getUser().then((_user) {
-      setState(() => {});
+    return getTweets().then((_response) {
+      List<Widget> newTweets = [];
+      for (var item in jsonDecode(_response.body)) {
+        newTweets.add(Tweet.fromJson(item));
+      }
+      setState(() {
+        _tweets = newTweets;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
         appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
           actions: <Widget>[
             IconButton(
+              onPressed: () {},
               icon: Icon(
                 Icons.settings,
                 color: Colors.white,
@@ -107,15 +108,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
+          onPressed: () {},
         ),
         body: RefreshIndicator(
           onRefresh: _refresh,
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: <Widget>[
-              Tweet('user', 'a really really long tweet')
-            ],
-          ),
+          child: ListView.builder(
+            itemCount: _tweets.length,
+            itemBuilder: (context, index) => _tweets[index]
+          )
         ));
   }
 }

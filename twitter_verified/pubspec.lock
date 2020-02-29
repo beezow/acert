@@ -184,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.14"
+  twitter_api:
+    dependency: "direct main"
+    description:
+      name: twitter_api
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   typed_data:
     dependency: transitive
     description:
