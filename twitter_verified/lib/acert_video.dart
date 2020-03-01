@@ -51,11 +51,35 @@ class _AcertVideoState extends State<StatefulWidget> {
         : SizedBox(height: 200);
   }
 
+   void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Acert Hash"),
+          content: new Text("ffbbee6bae6409b2a450d1f784e42e1b783e04426fbbee6bae6409b2a450d1f784e42e1b783e04426bbee6bae6409b2a450d1f784e42e1b783e04426"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+   }
+
+
   Widget verifiedWidget() {
     return verified
         ? FloatingActionButton.extended(
-            onPressed: () {},
-            label: Text('acert'),
+            onPressed: _showDialog,
+            label: Text('via acert'),
             icon: Icon(Icons.check),
             backgroundColor: Colors.green,
           )
