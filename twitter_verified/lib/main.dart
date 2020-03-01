@@ -49,8 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
       "statuses/user_timeline.json",
       // The options for the request
       options: {
-        "user_id": "19025957",
-        "screen_name": "TTCnotices",
+        "screen_name": "acent_video",
         "count": "20",
         "trim_user": "true",
         "tweet_mode": "extended", // Used to prevent truncating tweets
