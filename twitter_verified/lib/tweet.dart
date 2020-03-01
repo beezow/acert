@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:twitter_verified/acert_video.dart';
 import 'package:video_player/video_player.dart';
 
 class Tweet extends StatefulWidget {
@@ -20,36 +21,36 @@ class Tweet extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _TweetState(verified, text, url);
   }
+
 }
 
 class _TweetState extends State<Tweet> {
-  String url, text;
-  bool verified;
+  final String url, text;
+  final bool verified;
 
   bool loading = true;
   VideoPlayerController _controller;
 
   _TweetState(this.verified, this.text, this.url);
 
-  @override
-  void initState() {
-    super.initState();
 
-    if (this.mounted) {
-      Future.delayed(Duration(seconds: 2)).then((value) {
-        setState(() {
-          loading = false;
-        });
-      });
-    }
+  // @override
+  // void initState() {
+  //   super.initState();
 
-    _controller = VideoPlayerController.network(url)
-      ..initialize().then((_) {
-        setState(() {
-          _controller.setLooping(true);
-        });
-      });
-  }
+  //   Future.delayed(Duration(seconds: 2)).then((value) {
+  //     setState(() {
+  //       loading = false;
+  //     });
+  //   });
+
+  //   _controller = VideoPlayerController.network(url)
+  //     ..initialize().then((_) {
+  //       setState(() {
+  //         _controller.setLooping(true);
+  //       });
+  //     });
+  // }
 
   Widget header() {
     return Row(
@@ -88,50 +89,6 @@ class _TweetState extends State<Tweet> {
         )
       ],
     );
-  }
-
-  Widget verifiedWidget() {
-    return verified
-        ? FloatingActionButton.extended(
-            onPressed: () {},
-            label: Text('acert'),
-            icon: Icon(Icons.check),
-            backgroundColor: Colors.green,
-          )
-        : CircleAvatar(
-            child: Icon(
-              Icons.error_outline,
-              color: Colors.white,
-            ),
-            backgroundColor: Colors.red,
-          );
-  }
-
-  Widget video() {
-    return _controller.value.initialized
-        ? GestureDetector(
-            onTap: () {
-              setState(() {
-                _controller.value.isPlaying
-                    ? _controller.pause()
-                    : _controller.play();
-              });
-            },
-            child: Stack(
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                ),
-                Positioned(
-                  child:
-                      loading ? CircularProgressIndicator() : verifiedWidget(),
-                  bottom: 10,
-                  right: 10,
-                )
-              ],
-            ))
-        : SizedBox(height: 200);
   }
 
   Widget _buttonBar() {
@@ -186,15 +143,15 @@ class _TweetState extends State<Tweet> {
                 SizedBox(
                   height: 20,
                 ),
-                video(),
+                AcertVideo(verified, url),
                 _buttonBar(),
               ],
             )));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _controller.dispose();
+  // }
 }

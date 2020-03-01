@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
       token: Secrets.token,
       tokenSecret: Secrets.tokenSecret);
 
-  List<Widget> _tweets = [];
+  List<dynamic> _tweetJson = [];
 
   Future<dynamic> getTweets() async {
     return _twitterOauth.getTwitterRequest(
@@ -59,19 +59,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<Null> _refresh() async {
     return getTweets().then((_response) {
-      List<Widget> newWidgets = [];
       var body = jsonDecode(_response.body);
-      int i = body.length - 1;
 
-      setState(() => _tweets = []);
-
+      List<dynamic> newJson = [];
+      print('refresh pulled');
       for (var item in body) {
-        newWidgets.add(Tweet.fromJson(i % 3 != 2, item));
-        i--;
+        newJson.add(item);
       }
+
       setState(() {
-        _tweets = newWidgets;
-      });
+        _tweetJson = newJson;
+       });
+
     });
   }
 
@@ -118,7 +117,11 @@ class _MyHomePageState extends State<MyHomePage> {
         body: RefreshIndicator(
             onRefresh: _refresh,
             child: ListView.builder(
-                itemCount: _tweets.length,
-                itemBuilder: (context, index) => _tweets[index])));
+                itemCount: _tweetJson.length,
+                itemBuilder: (context, index) {
+                  return Tweet.fromJson(
+                      (_tweetJson.length - index - 1) % 3 != 2,
+                      _tweetJson[index]);
+                })));
   }
 }
