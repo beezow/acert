@@ -57,17 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<Null> _refresh() {
+  Future<Null> _refresh() async {
     return getTweets().then((_response) {
-      List<Widget> newTweets = [];
+      List<Widget> newWidgets = [];
       var body = jsonDecode(_response.body);
       int i = body.length - 1;
+
+      setState(() => _tweets = []);
+
       for (var item in body) {
-        newTweets.add(Tweet.fromJson(i % 3 != 2, item));
+        newWidgets.add(Tweet.fromJson(i % 3 != 2, item));
         i--;
       }
       setState(() {
-        _tweets = newTweets;
+        _tweets = newWidgets;
       });
     });
   }
@@ -113,11 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {},
         ),
         body: RefreshIndicator(
-          onRefresh: _refresh,
-          child: ListView.builder(
-            itemCount: _tweets.length,
-            itemBuilder: (context, index) => _tweets[index]
-          )
-        ));
+            onRefresh: _refresh,
+            child: ListView.builder(
+                itemCount: _tweets.length,
+                itemBuilder: (context, index) => _tweets[index])));
   }
 }

@@ -26,7 +26,7 @@ class _TweetState extends State<Tweet> {
   String url, text;
   bool verified;
 
-  bool loading = false;
+  bool loading = true;
   VideoPlayerController _controller;
 
   _TweetState(this.verified, this.text, this.url);
@@ -34,6 +34,7 @@ class _TweetState extends State<Tweet> {
   @override
   void initState() {
     super.initState();
+
     if (this.mounted) {
       Future.delayed(Duration(seconds: 2)).then((value) {
         setState(() {
@@ -41,6 +42,7 @@ class _TweetState extends State<Tweet> {
         });
       });
     }
+
     _controller = VideoPlayerController.network(url)
       ..initialize().then((_) {
         setState(() {
@@ -81,7 +83,7 @@ class _TweetState extends State<Tweet> {
                 ),
               ],
             ),
-            Text(text)
+            SizedBox(child: Text(text), width: 300),
           ],
         )
       ],
