@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tweet_webview/tweet_webview.dart';
 import 'package:video_player/video_player.dart';
 
 class Tweet extends StatefulWidget {
   final String url, text;
+  final bool verified;
 
-  Tweet(this.text, this.url);
+  Tweet(this.verified, this.text, this.url);
 
-  factory Tweet.fromJson(Map<String, dynamic> json) {
-    // for (var key in json.keys) {
-    //   print(key);
-    // }
-
-    print(json['full_text']);
+  factory Tweet.fromJson(bool verified, Map<String, dynamic> json) {
     return Tweet(
+        verified,
         json['full_text'],
         json['extended_entities']['media'][0]['video_info']['variants'][0]
             ['url']);
@@ -22,19 +18,29 @@ class Tweet extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _TweetState(text, url);
+    return _TweetState(verified, text, url);
   }
 }
 
 class _TweetState extends State<Tweet> {
   String url, text;
+  bool verified;
+
+  bool loading = false;
   VideoPlayerController _controller;
 
-  _TweetState(this.text, this.url);
+  _TweetState(this.verified, this.text, this.url);
 
   @override
   void initState() {
     super.initState();
+    if (this.mounted) {
+      Future.delayed(Duration(seconds: 2)).then((value) {
+        setState(() {
+          loading = false;
+        });
+      });
+    }
     _controller = VideoPlayerController.network(url)
       ..initialize().then((_) {
         setState(() {
@@ -46,23 +52,32 @@ class _TweetState extends State<Tweet> {
   Widget header() {
     return Row(
       children: <Widget>[
-        FlutterLogo(
-          size: 50,
+        SizedBox(
+          width: 15,
+        ),
+        CircleAvatar(
+          child: Text('A'),
+          radius: 25,
+        ),
+        SizedBox(
+          width: 15,
         ),
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(
                   'Acert',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  width: 10,
+                  width: 8,
                 ),
                 Text(
                   '@acert_video',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w100),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w200),
                 ),
               ],
             ),
@@ -71,6 +86,23 @@ class _TweetState extends State<Tweet> {
         )
       ],
     );
+  }
+
+  Widget verifiedWidget() {
+    return verified
+        ? FloatingActionButton.extended(
+            onPressed: () {},
+            label: Text('acert'),
+            icon: Icon(Icons.check),
+            backgroundColor: Colors.green,
+          )
+        : CircleAvatar(
+            child: Icon(
+              Icons.error_outline,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.red,
+          );
   }
 
   Widget video() {
@@ -90,23 +122,48 @@ class _TweetState extends State<Tweet> {
                   child: VideoPlayer(_controller),
                 ),
                 Positioned(
-                  child: CircularProgressIndicator(),
+                  child:
+                      loading ? CircularProgressIndicator() : verifiedWidget(),
                   bottom: 10,
                   right: 10,
                 )
               ],
             ))
-        : Container();
+        : SizedBox(height: 200);
   }
 
   Widget _buttonBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        IconButton(icon: Icon(Icons.message)),
-        IconButton(icon: Icon(Icons.refresh)),
-        IconButton(icon: Icon(Icons.favorite)),
-        IconButton(icon: Icon(Icons.file_upload)),
+        IconButton(
+          icon: Icon(
+            Icons.message,
+            color: Colors.black26,
+          ),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.refresh,
+            color: Colors.black26,
+          ),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.favorite,
+            color: Colors.black26,
+          ),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.file_upload,
+            color: Colors.black26,
+          ),
+          onPressed: () {},
+        ),
       ],
     );
   }
@@ -114,16 +171,28 @@ class _TweetState extends State<Tweet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(5),
         child: Card(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Column(
               children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
                 header(),
+                SizedBox(
+                  height: 20,
+                ),
                 video(),
                 _buttonBar(),
               ],
             )));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }

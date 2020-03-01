@@ -121,13 +121,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.4"
-  path_provider:
-    dependency: transitive
-    description:
-      name: path_provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.6.1"
   pedantic:
     dependency: transitive
     description:
@@ -142,13 +135,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
-  platform:
-    dependency: transitive
-    description:
-      name: platform
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.2.1"
   quiver:
     dependency: transitive
     description:
@@ -203,13 +189,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.14"
-  tweet_webview:
-    dependency: "direct main"
-    description:
-      name: tweet_webview
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.2"
   twitter_api:
     dependency: "direct main"
     description:
@@ -252,13 +231,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2+1"
-  webview_flutter:
-    dependency: transitive
-    description:
-      name: webview_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.19+8"
   xml:
     dependency: transitive
     description:
@@ -268,4 +240,4 @@ packages:
     version: "3.5.0"
 sdks:
   dart: ">=2.4.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.5 <2.0.0"
+  flutter: ">=1.12.13+hotfix.4 <2.0.0"

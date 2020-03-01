@@ -60,8 +60,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Null> _refresh() {
     return getTweets().then((_response) {
       List<Widget> newTweets = [];
-      for (var item in jsonDecode(_response.body)) {
-        newTweets.add(Tweet.fromJson(item));
+      var body = jsonDecode(_response.body);
+      int i = body.length - 1;
+      for (var item in body) {
+        newTweets.add(Tweet.fromJson(i % 3 != 2, item));
+        i--;
       }
       setState(() {
         _tweets = newTweets;
