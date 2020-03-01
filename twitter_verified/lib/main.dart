@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Teddy'),
+      home: MyHomePage(title: "Acert's tweets"),
     );
   }
 }

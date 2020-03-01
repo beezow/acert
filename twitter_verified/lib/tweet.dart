@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:twitter_verified/acert_video.dart';
-import 'package:video_player/video_player.dart';
 
 class Tweet extends StatefulWidget {
   final String url, text;
   final bool verified;
 
-  Tweet(this.verified, this.text, this.url);
+  final Key key;
+
+  Tweet(this.verified, this.text, this.url, this.key);
 
   factory Tweet.fromJson(bool verified, Map<String, dynamic> json) {
-    return Tweet(
-        verified,
-        json['full_text'],
-        json['extended_entities']['media'][0]['video_info']['variants'][0]
-            ['url']);
+    String url = json['extended_entities']['media'][0]['video_info']['variants']
+        [0]['url'];
+    return Tweet(verified, json['full_text'], url, Key(url));
   }
 
   @override
   State<StatefulWidget> createState() {
     return _TweetState(verified, text, url);
   }
-
 }
 
 class _TweetState extends State<Tweet> {
@@ -29,28 +27,8 @@ class _TweetState extends State<Tweet> {
   final bool verified;
 
   bool loading = true;
-  VideoPlayerController _controller;
 
   _TweetState(this.verified, this.text, this.url);
-
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   Future.delayed(Duration(seconds: 2)).then((value) {
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //   });
-
-  //   _controller = VideoPlayerController.network(url)
-  //     ..initialize().then((_) {
-  //       setState(() {
-  //         _controller.setLooping(true);
-  //       });
-  //     });
-  // }
 
   Widget header() {
     return Row(

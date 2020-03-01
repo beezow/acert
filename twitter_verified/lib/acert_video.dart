@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
 class AcertVideo extends StatefulWidget {
-  bool verified;
-  String url;
+  final bool verified;
+  final String url;
 
   AcertVideo(this.verified, this.url);
 
