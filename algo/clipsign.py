@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
 import ffmpeg
 import argparse
 import os
-
+import sys
 import numpy as np
 
 from tqdm import tqdm
@@ -13,8 +14,10 @@ from Crypto import Random
 
 from moviepy.editor import *
 
+
 def clip(in_file, start, end):
     v = load_video(in_file)
+    
     end = end if end < v.end else v.end
     start = start if start < v.start else v.start
     start_frame = int((start/v.duration) * v.reader.nframes)
@@ -22,13 +25,13 @@ def clip(in_file, start, end):
     start = v.duration * start_frame/v.reader.nframes
     end = v.duration * end_frame/v.reader.nframes
 
-    video = v.subclip(start, end)
+    print("start: {}\nend: {}".format(start_frame, end_frame))
     sig = load_sig_from_vid(in_file)
     sig = sig[start_frame:end_frame]
-    print("infile {}".format(in_file))
-    print("==============================")
-    video.write_videofile(in_file)
-    add_signature(in_file, signature)
+    print(sig[0])
+    ffmpeg.input(in_file).trim(start_frame=start_frame, end_frame=end_frame).setpts ('PTS-STARTPTS').output(".int.mkv", acodec='copy', vcodec='copy')
+
+    add_signature(".int.mkv", sig)
 
 def add_signature(in_file, signature):
     hash = ''
@@ -55,7 +58,7 @@ def load_sig_from_vid(infile):
         sig = np.frombuffer(sig_b).reshape(-1, 32)
         return sig
     except:
-        print("invalid")
+        print("Invalid")
         sys.exit(2)
 
 def meta_load_hexsignature(in_file):
@@ -91,9 +94,7 @@ def verify_frame(pk, frame, signature):
         pk.verify(hash, signature.tobytes())
         return True;
     except (ValueError, TypeError):
-        print("invalid")
-        sys.exit(2)
-
+        return False
 
 
 def sign_clip(video, key):
@@ -112,12 +113,13 @@ def verify_clip(video, key, signature):
         for i, frame in enumerate(tqdm(video.iter_frames())):
             pa = verify_frame(pk, frame, signature[i])
             if (not pa):
-                print("fail {}".format(i))
+                print("Invalid {}".format(i))
                 return
     except:
-        print("fail")
+        print("Invalid")
+        return
 
-    print("pass")
+    print("Valid")
 
 
 def load_video(vid_file):
@@ -135,17 +137,17 @@ def load_sig(sig_file):
 ex:
 '''
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    '''
-        clipsign.py sign testmp4.mp4 --outfile testsigned.mp4 --private-key private.rsa \
-        clipsign.py sign testmp4.mp4 --private-key private.rsa \
-        clipsign.py check signed.mp4 --public-key public.rsa \
-        clipsign.py clip signed.mp4 --start 1 --end 10 --outfile stillsigned.mp4 \
-    '''
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, epilog='''Example Usage:
+        \nclipsign.py testmp4.mp4 --sign --key private.rsa --signature test.sig \
+        \nclipsign.py testmp4.mp4 --sign --key private.rsa  \
+        \nclipsign.py check signed.mp4 --key public.rsa \
+        \nclipsign.py check signed.mp4 --key public.rsa --signature test.sig \
+        \nclipsign.py clip signed.mp4 --start 1 --end 10 \
+    ''');
+
     parser.add_argument('infile', help="input mp4 file")
-    parser.add_argument('--outfile', help="output mp4 file")
     parser.add_argument('--key', help="file holding rsa public/private key")
-    parser.add_argument('--sig', help="file holding signature")
+    parser.add_argument('--signature', help="file holding signature")
     parser.add_argument('--clip', help="clip the video segment to given times", action="store_true")
     parser.add_argument('--start', help="clip the video segment from start time to end time", type=int)
     parser.add_argument('--end', help="clip the video segment from start time to end time", type=int)
@@ -158,12 +160,12 @@ if __name__ == "__main__":
     elif args.sign:
         sig = sign_clip(load_video(args.infile), load_key(args.key))
         add_signature(args.infile, sig)
-        if args.sig:
-          with open(args.sig, "wb") as f:
+        if args.signature:
+          with open(args.signature, "wb") as f:
                 f.write(sig.tobytes())
 
     elif args.check:
-        if args.sig:  
-            verify_clip(load_video(args.infile), load_key(args.key), load_sig(args.sig))
+        if args.signature:  
+            verify_clip(load_video(args.infile), load_key(args.key), load_sig(args.signature))
         else:
             verify_clip(load_video(args.infile), load_key(args.key), load_sig_from_vid(args.infile))
