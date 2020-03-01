@@ -1,16 +1,17 @@
-# twitter_verified
+# Acert-Video
 
-A new Flutter project.
+Acert is an open source hashing plugin to combat social media disinformation.
 
-## Getting Started
+This packages provides the AcertVideo class, a decorated VideoPlayer that also parses mkv and mp4 files' metadata to determine source validity. 
+AcertVideo handles 
 
-This project is a starting point for a Flutter application.
+## How to Use:
+Below is an example of how the package would be used.
 
-A few resources to get you started if this is your first Flutter project:
+```dart
+import 'package:assert_video/assert_video.dart'
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+// Example stock mp4 url
+final String url = 'https://www.pexels.com/video/854520/download/?search_query=&tracking_id=d4ep2dp6l0w'
+AcertVideo toPlay = AcertVideo(url);
+```
