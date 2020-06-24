@@ -1,7 +1,7 @@
 # ACERT
 
 ## Inspiration
-55% of all Americans get their news online, according to Pew Research, 8% more than last year. With the tremendous rise in the perceived legitimacy of this new source, social media platforms have struggled to ensure credibility. One of social media’s strengths is its low barrier to entry, but this strength makes it vulnerable to disinformation campaigns. The Knight Foundation discovered more than 6 million false Tweets posted just over the course of the month before the 2016 election.
+55% of all Americans get their news online-- 8% more than last year[1]. With the tremendous rise in the perceived legitimacy of this new source, social media platforms have struggled to ensure credibility. One of social media’s strengths is its low barrier to entry, but this strength makes it vulnerable to disinformation campaigns. The Knight Foundation discovered more than 6 million false Tweets posted just over the course of the month before the 2016 election.
 
 We wanted to develop an extendable, open tool to help social media platforms combat disinformation.
 
@@ -32,3 +32,4 @@ The second component of our project is an open-source tool for social media plat
 5. That verification process is done once when posting, so there is no impact on the user who watches the video-- that info is cached.
 6. Verified videos are “blue checked” every time a user sees them.
 
+[1] Pew Research
